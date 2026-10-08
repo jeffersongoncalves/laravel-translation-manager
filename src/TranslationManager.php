@@ -239,7 +239,8 @@ class TranslationManager
 
     private function fileLoader(): Loader
     {
-        $loader = app('translation.loader');
+        // Through the translator: packages register their namespaces when it resolves (loadTranslationsFrom).
+        $loader = app('translator')->getLoader();
 
         return $loader instanceof DatabaseLoader ? $loader->files() : $loader;
     }

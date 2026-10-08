@@ -44,7 +44,8 @@ class TestCase extends Orchestra
     {
         parent::setUp();
 
-        $this->app['translator']->addNamespace('demo', __DIR__.'/fixtures/package');
+        // Like a package's loadTranslationsFrom(): registered only once the translator resolves.
+        $this->app->afterResolving('translator', fn ($translator) => $translator->addNamespace('demo', __DIR__.'/fixtures/package'));
     }
 
     protected function tearDown(): void
