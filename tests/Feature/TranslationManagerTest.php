@@ -73,6 +73,16 @@ it('serves database overrides for app, JSON and vendor lines', function () {
         ->and(line('demo', 'actions', 'delete')->value('en'))->toBe('Delete');
 });
 
+it('drops empty overrides on save', function () {
+    $line = TranslationLine::query()->create(['group' => 'messages', 'key' => 'x', 'text' => ['en' => '', 'pt_BR' => null]]);
+
+    expect($line->fresh()?->text)->toBeNull();
+
+    $line->update(['text' => ['en' => 'X', 'pt_BR' => '']]);
+
+    expect($line->fresh()?->text)->toBe(['en' => 'X']);
+});
+
 it('falls back to the files when the table does not exist', function () {
     Schema::drop('translation_lines');
     app()->forgetInstance('translator');

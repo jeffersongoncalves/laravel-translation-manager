@@ -14,7 +14,7 @@ use JeffersonGoncalves\TranslationManager\TranslationManager;
  * @property string $group
  * @property string $key
  * @property array<string, string>|null $source values read from the lang files, per locale
- * @property array<string, string|null>|null $text database overrides, per locale
+ * @property array<string, string|null>|null $text database overrides, per locale (empty ones are dropped on save)
  */
 class TranslationLine extends Model
 {
@@ -37,6 +37,11 @@ class TranslationLine extends Model
     protected static function booted(): void
     {
         $flush = fn (self $line) => app(TranslationManager::class)->flush($line->namespace, $line->group);
+
+        // Empty overrides fall back to the file anyway: store them as nothing, so whereNotNull('text') means overridden.
+        static::saving(function (self $line) {
+            $line->text = array_filter($line->text ?? [], fn ($value) => filled($value)) ?: null;
+        });
 
         static::saved($flush);
         static::deleted($flush);
