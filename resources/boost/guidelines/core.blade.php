@@ -7,6 +7,7 @@ Database overrides for Laravel translations (app groups, JSON and package namesp
 @verbatim
 <code-snippet name="Install" lang="bash">
 composer require jeffersongoncalves/laravel-translation-manager
+php artisan vendor:publish --tag="translation-manager-migrations"
 php artisan migrate
 php artisan translation-manager:scan
 </code-snippet>

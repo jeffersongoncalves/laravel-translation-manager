@@ -8,6 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // 1.0 ran this migration straight from the package: publishing it on those installs must not fail.
+        if (Schema::hasTable(config('translation-manager.table', 'translation_lines'))) {
+            return;
+        }
+
         Schema::create(config('translation-manager.table', 'translation_lines'), function (Blueprint $table) {
             $table->id();
             $table->string('namespace', 100)->default('*');

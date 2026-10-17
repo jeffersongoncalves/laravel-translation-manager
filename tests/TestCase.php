@@ -3,11 +3,14 @@
 namespace JeffersonGoncalves\TranslationManager\Tests;
 
 use Illuminate\Support\Facades\File;
+use JeffersonGoncalves\PestPluginDatabaseMigrations\LoadsPackageMigrations;
 use JeffersonGoncalves\TranslationManager\TranslationManagerServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
+    use LoadsPackageMigrations;
+
     protected string $langPath;
 
     protected function getPackageProviders($app): array
@@ -37,7 +40,7 @@ class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations(): void
     {
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadPackageMigrations(TranslationManagerServiceProvider::class);
     }
 
     protected function setUp(): void

@@ -119,3 +119,21 @@ it('exports only the requested locales', function () {
         ->and(File::getRequire($this->langPath.'/pt_BR/messages.php'))->not->toHaveKey('bye')
         ->and(line('*', 'messages', 'bye')->text)->toBe(['pt_BR' => 'Tchau']);
 });
+
+it('publishes the migration stub', function () {
+    $this->artisan('vendor:publish', ['--tag' => 'translation-manager-migrations'])->assertSuccessful();
+
+    $published = File::glob(database_path('migrations/*_create_translation_lines_table.php'));
+    File::delete($published);
+
+    expect($published)->toHaveCount(1);
+});
+
+it('runs the published migration on a table 1.0 already created', function () {
+    TranslationLine::query()->create(['group' => 'messages', 'key' => 'kept']);
+
+    (require __DIR__.'/../../database/migrations/create_translation_lines_table.php.stub')->up();
+
+    expect(Schema::hasTable('translation_lines'))->toBeTrue()
+        ->and(TranslationLine::query()->where('key', 'kept')->exists())->toBeTrue();
+});

@@ -18,9 +18,12 @@ The lang files stay the source of truth: the package only lays the database over
 
 ```bash
 composer require jeffersongoncalves/laravel-translation-manager
+php artisan vendor:publish --tag="translation-manager-migrations"
 php artisan migrate
 php artisan translation-manager:scan
 ```
+
+> **Upgrading from 1.0?** It ran its migration straight from the package, so the table already exists. Publishing and migrating is still safe: the migration skips a table that's already there.
 
 Optionally publish the config:
 

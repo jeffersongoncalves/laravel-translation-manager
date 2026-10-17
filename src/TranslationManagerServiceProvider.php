@@ -16,6 +16,7 @@ class TranslationManagerServiceProvider extends PackageServiceProvider
         $package
             ->name('laravel-translation-manager')
             ->hasConfigFile('translation-manager')
+            ->hasMigrations(['create_translation_lines_table'])
             ->hasCommands([ScanCommand::class, ExportCommand::class]);
     }
 
@@ -25,13 +26,5 @@ class TranslationManagerServiceProvider extends PackageServiceProvider
         $this->app->alias(TranslationManager::class, 'laravel-translation-manager');
 
         $this->app->extend('translation.loader', fn (Loader $loader, Application $app) => new DatabaseLoader($loader, $app->make(TranslationManager::class)));
-    }
-
-    public function packageBooted(): void
-    {
-        $migrations = __DIR__.'/../database/migrations';
-
-        $this->loadMigrationsFrom($migrations);
-        $this->publishes([$migrations => database_path('migrations')], 'translation-manager-migrations');
     }
 }
